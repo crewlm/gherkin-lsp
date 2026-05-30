@@ -29,6 +29,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 import { buildStepTexts } from './buildStepTexts.js'
+import { buildDefaultSettings } from './defaultSettings.js'
 import { extname, Files } from './Files.js'
 import { getLanguage, loadGherkinSources, loadGlueSources } from './fs.js'
 import { getStepDefinitionSnippetLinks } from './getStepDefinitionSnippetLinks.js'
@@ -40,54 +41,11 @@ type ServerInfo = {
   version: string
 }
 
-// In order to allow 0-config in LSP clients we provide default settings.
-// This should be consistent with the `README.md` in `cucumber/vscode` - this is to
-// ensure the docs for the plugin reflect the defaults.
-const defaultSettings: Settings = {
-  // IMPORTANT: If you change features or glue below, please also create a PR to update
-  // the vscode extension defaults accordingly in https://github.com/cucumber/vscode/blob/main/README.md#extension-settings
-  features: [
-    // Cucumber-JVM
-    'src/test/**/*.feature',
-    // Cucumber-Ruby, Cucumber-Js, Behat, Behave, Godog
-    'features/**/*.feature',
-    // Pytest-BDD
-    'tests/**/*.feature',
-    // SpecFlow
-    '*specs*/**/*.feature',
-  ],
-  glue: [
-    // Cucumber-JVM
-    'src/test/**/*.java',
-    // Cucumber-Js
-    'features/**/*.ts',
-    'features/**/*.tsx',
-    'features/**/*.js',
-    'features/**/*.jsx',
-    // Behat
-    'features/**/*.php',
-    // Behave
-    'features/**/*.py',
-    // Pytest-BDD
-    'tests/**/*.py',
-    // Cucumber Rust
-    'tests/**/*.rs',
-    'features/**/*.rs',
-    // Cucumber-Ruby
-    'features/**/*.rb',
-    // SpecFlow
-    '*specs*/**/*.cs',
-    // Godog
-    'features/**/*_test.go',
-  ],
-  parameterTypes: [],
-  snippetTemplates: {},
-}
-
 export class CucumberLanguageServer {
   private readonly expressionBuilder: ExpressionBuilder
   private searchIndex: Index
   private expressionBuilderResult: ExpressionBuilderResult | undefined = undefined
+  private initializationSettings: Partial<Settings> | undefined = undefined
   private reindexingTimeout: NodeJS.Timeout
   private rootUri: string
   private files: Files
@@ -128,6 +86,7 @@ export class CucumberLanguageServer {
       } else {
         connection.console.error(`Could not determine rootPath`)
       }
+      this.initializationSettings = extractSettings(params.initializationOptions)
       this.files = makeFiles(this.rootUri)
       // Some users have reported that the globs don't find any files. This is to debug that issue
       connection.console.info(`Root uri    : ${this.rootUri}`)
@@ -136,7 +95,7 @@ export class CucumberLanguageServer {
       if (params.capabilities.workspace?.configuration) {
         connection.onDidChangeConfiguration((params) => {
           this.connection.console.info(`Client sent workspace/configuration`)
-          this.reindex(<Settings>params.settings).catch((err) => {
+          this.reindex(this.buildSettings(extractSettings(params.settings))).catch((err) => {
             connection.console.error(`Failed to reindex: ${err.message}`)
           })
         })
@@ -379,25 +338,38 @@ export class CucumberLanguageServer {
         ],
       })
       if (config && config.length === 1) {
-        const settings: Partial<Settings> | null = config[0]
-
-        return {
-          features: getArray(settings?.features, defaultSettings.features),
-          glue: getArray(settings?.glue, defaultSettings.glue),
-          parameterTypes: getArray(settings?.parameterTypes, defaultSettings.parameterTypes),
-          snippetTemplates: settings?.snippetTemplates || {},
-        }
+        return this.buildSettings(extractSettings(config[0]))
       } else {
         this.connection.console.error(
           `The client responded with a config we cannot process: ${JSON.stringify(config, null, 2)}`
         )
-        this.connection.console.error(`Using default settings`)
-        return defaultSettings
+        this.connection.console.error(`Using initialization or default settings`)
+        return this.buildSettings()
       }
     } catch (err) {
       this.connection.console.error(`Failed to request configuration: ${err.message}`)
-      this.connection.console.error(`Using default settings`)
-      return defaultSettings
+      this.connection.console.error(`Using initialization or default settings`)
+      return this.buildSettings()
+    }
+  }
+
+  private buildSettings(settings?: Partial<Settings>): Settings {
+    const defaultSettings = buildDefaultSettings()
+    return {
+      features: getArray(
+        settings?.features,
+        getArray(this.initializationSettings?.features, defaultSettings.features)
+      ),
+      glue: getArray(
+        settings?.glue,
+        getArray(this.initializationSettings?.glue, defaultSettings.glue)
+      ),
+      parameterTypes: getArray(
+        settings?.parameterTypes,
+        getArray(this.initializationSettings?.parameterTypes, defaultSettings.parameterTypes)
+      ),
+      snippetTemplates:
+        settings?.snippetTemplates || this.initializationSettings?.snippetTemplates || {},
     }
   }
 
@@ -481,4 +453,15 @@ export class CucumberLanguageServer {
 function getArray<T>(arr: readonly T[] | undefined | null, defaultArr: readonly T[]): readonly T[] {
   if (!Array.isArray(arr) || arr.length === 0) return defaultArr
   return arr
+}
+
+function extractSettings(value: unknown): Partial<Settings> | undefined {
+  if (!isRecord(value)) return undefined
+  const cucumberSettings = value.cucumber
+  if (isRecord(cucumberSettings)) return cucumberSettings as Partial<Settings>
+  return value as Partial<Settings>
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

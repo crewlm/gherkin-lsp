@@ -22,7 +22,7 @@ describe('Standalone', () => {
 
   beforeEach(async () => {
     logMessages = []
-    serverFork = fork('./bin/cucumber-language-server.cjs', ['--stdio'], {
+    serverFork = fork('./bin/gherkin-lsp.cjs', ['--stdio'], {
       silent: true,
     })
 

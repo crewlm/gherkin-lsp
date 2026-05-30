@@ -1,9 +1,20 @@
 import fg from 'fast-glob'
 import fs from 'fs/promises'
-import { relative } from 'path'
+import { isAbsolute, relative, resolve } from 'path'
 import url from 'url'
 
 import { Files } from '../Files.js'
+
+const ignoredDirectories = [
+  '**/.git/**',
+  '**/.hg/**',
+  '**/.svn/**',
+  '**/.venv/**',
+  '**/__pycache__/**',
+  '**/coverage/**',
+  '**/dist/**',
+  '**/node_modules/**',
+]
 
 export class NodeFiles implements Files {
   constructor(private readonly rootUri: string) {}
@@ -24,8 +35,13 @@ export class NodeFiles implements Files {
 
   async findUris(glob: string): Promise<readonly string[]> {
     const cwd = url.fileURLToPath(this.rootUri)
-    const paths = await fg(glob, { cwd, caseSensitiveMatch: false, onlyFiles: true })
-    return paths.map((path) => url.pathToFileURL(path).href)
+    const paths = await fg(glob, {
+      cwd,
+      caseSensitiveMatch: false,
+      ignore: ignoredDirectories,
+      onlyFiles: true,
+    })
+    return paths.map((path) => url.pathToFileURL(isAbsolute(path) ? path : resolve(cwd, path)).href)
   }
 
   relativePath(uri: string): string {

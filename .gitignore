@@ -17,3 +17,5 @@ storybook-static
 *.iml
 .vscode-test
 src/version.ts
+gherkin_features/
+steps/

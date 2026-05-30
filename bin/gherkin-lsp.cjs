@@ -12,6 +12,6 @@ const { connection } = startStandaloneServer(wasmBasePath, (rootUri) => new Node
 // Don't die on unhandled Promise rejections
 process.on('unhandledRejection', (reason, p) => {
   connection.console.error(
-    `Cucumber Language Server ${version}: Unhandled Rejection at promise: ${p}, reason: ${reason}`
+    `Gherkin LSP ${version}: Unhandled Rejection at promise: ${p}, reason: ${reason}`
   )
 })

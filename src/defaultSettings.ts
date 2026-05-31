@@ -1,4 +1,5 @@
-import { Settings } from './types.js'
+import { bundledParameterTypes } from './bundledParameterTypes.js'
+import { ParameterTypeMeta, Settings } from './types.js'
 
 export const gherkinLspStepsEnvVar = 'GHERKIN_LSP_STEPS'
 
@@ -9,7 +10,7 @@ export function buildDefaultSettings(): Settings {
   return {
     features: defaultFeatureGlobs,
     glue: getDefaultGlueGlobs(),
-    parameterTypes: [],
+    parameterTypes: bundledParameterTypes,
     snippetTemplates: {},
   }
 }
@@ -27,4 +28,17 @@ function toPythonStepGlob(steps: string): string {
 
 function containsGlobMagic(value: string): boolean {
   return /[*?[\]{}()!+@]/.test(value)
+}
+
+export function mergeParameterTypes(
+  ...parameterTypeLists: readonly (readonly ParameterTypeMeta[] | undefined)[]
+): readonly ParameterTypeMeta[] {
+  const parameterTypesByName = new Map<string, ParameterTypeMeta>()
+  for (const parameterTypeList of parameterTypeLists) {
+    if (!parameterTypeList) continue
+    for (const parameterType of parameterTypeList) {
+      parameterTypesByName.set(parameterType.name, parameterType)
+    }
+  }
+  return [...parameterTypesByName.values()]
 }

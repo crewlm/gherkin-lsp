@@ -29,7 +29,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 import { buildStepTexts } from './buildStepTexts.js'
-import { buildDefaultSettings } from './defaultSettings.js'
+import { buildDefaultSettings, mergeParameterTypes } from './defaultSettings.js'
 import { extname, Files } from './Files.js'
 import { getLanguage, loadGherkinSources, loadGlueSources } from './fs.js'
 import { getStepDefinitionSnippetLinks } from './getStepDefinitionSnippetLinks.js'
@@ -364,9 +364,10 @@ export class CucumberLanguageServer {
         settings?.glue,
         getArray(this.initializationSettings?.glue, defaultSettings.glue)
       ),
-      parameterTypes: getArray(
-        settings?.parameterTypes,
-        getArray(this.initializationSettings?.parameterTypes, defaultSettings.parameterTypes)
+      parameterTypes: mergeParameterTypes(
+        defaultSettings.parameterTypes,
+        this.initializationSettings?.parameterTypes,
+        settings?.parameterTypes
       ),
       snippetTemplates:
         settings?.snippetTemplates || this.initializationSettings?.snippetTemplates || {},

@@ -1,0 +1,12 @@
+{
+  "languages": {
+    "Gherkin": {
+      "language_servers": ["gherkin-lsp", "!cucumber"]
+    }
+  },
+  "lsp": {
+    "gherkin-lsp": {
+      "initialization_options": {}
+    }
+  }
+}

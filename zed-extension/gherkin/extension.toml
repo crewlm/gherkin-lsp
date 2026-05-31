@@ -1,0 +1,16 @@
+id = "gherkin"
+name = "Gherkin"
+description = "Gherkin support using the CrewLM Gherkin LSP"
+version = "0.1.0"
+schema_version = 1
+authors = ["Viktor Forsman"]
+repository = "https://github.com/crewlm/gherkin-lsp"
+languages = ["languages/gherkin"]
+
+[language_servers.gherkin-lsp]
+name = "Gherkin LSP"
+languages = ["Gherkin"]
+
+[grammars.gherkin]
+repository = "https://github.com/thlcodes/tree-sitter-gherkin"
+rev = "133e9b270e80ecb8875bbe2f0625fcb276ea5ddb"

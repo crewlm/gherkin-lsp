@@ -105,7 +105,7 @@ async function main() {
       '--no-audit',
       '--no-fund',
       '--package-lock=false',
-      '--prefer-offline',
+      '--prefer-online',
       tarball,
     ]
 

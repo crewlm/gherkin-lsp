@@ -8,8 +8,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@monostop/gherkin-lsp">
-    <img src="https://img.shields.io/npm/v/@monostop/gherkin-lsp.svg?color=dark-green" alt="npm">
+  <a href="https://www.npmjs.com/package/@crewlm/gherkin-lsp">
+    <img src="https://img.shields.io/npm/v/@crewlm/gherkin-lsp.svg?color=dark-green" alt="npm">
   </a>
 </p>
 
@@ -28,8 +28,8 @@ This is a focused fork of the Cucumber language server. It defaults to:
 Run the server directly with `npx` or `bunx`:
 
 ```console
-npx @monostop/gherkin-lsp --stdio
-bunx @monostop/gherkin-lsp --stdio
+npx @crewlm/gherkin-lsp --stdio
+bunx @crewlm/gherkin-lsp --stdio
 ```
 
 The executable exposed by the package is `gherkin-lsp`.
@@ -54,13 +54,13 @@ If the editor workspace root is somewhere else, point the server at the steps di
 explicitly:
 
 ```console
-GHERKIN_LSP_STEPS=/path/to/carmusr/lib/python/carmtest/behave/steps npx @monostop/gherkin-lsp --stdio
+GHERKIN_LSP_STEPS=/path/to/carmusr/lib/python/carmtest/behave/steps npx @crewlm/gherkin-lsp --stdio
 ```
 
 `GHERKIN_LSP_STEPS` also accepts a glob:
 
 ```console
-GHERKIN_LSP_STEPS=/path/to/carmusr/lib/python/carmtest/behave/steps/**/*.py npx @monostop/gherkin-lsp --stdio
+GHERKIN_LSP_STEPS=/path/to/carmusr/lib/python/carmtest/behave/steps/**/*.py npx @crewlm/gherkin-lsp --stdio
 ```
 
 The server retrieves `cucumber.*` settings from the client with a [workspace/configuration](https://microsoft.github.io/language-server-protocol/specification#workspace_configuration) request.

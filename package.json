@@ -1,5 +1,5 @@
 {
-  "name": "@monostop/gherkin-lsp",
+  "name": "@crewlm/gherkin-lsp",
   "version": "0.0.1",
   "description": "Gherkin language server for Python Behave step definitions",
   "engines": {

@@ -1,6 +1,6 @@
 {
   "name": "@monostop/gherkin-lsp",
-  "version": "1.7.0",
+  "version": "0.0.1",
   "description": "Gherkin language server for Python Behave step definitions",
   "engines": {
     "node": ">=16.0.0"
@@ -24,6 +24,7 @@
     }
   },
   "files": [
+    "bin",
     "dist/cjs/src",
     "dist/cjs/package.json",
     "dist/esm/src",
@@ -41,16 +42,19 @@
     "build:esm": "tsc --build tsconfig.build-esm.json",
     "build:version": "node --eval \"console.log('export const version = \\'' + require('./package.json').version + '\\'')\" > src/version.ts",
     "build": "npm run build:version && npm run build:cjs && npm run build:esm",
+    "clean": "node --eval \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "test": "npm run test:cjs",
     "test:cjs": "npm run build:cjs && mocha --no-config --recursive dist/cjs/test",
     "pretest": "npm run build:version",
-    "prepublishOnly": "npm run build",
+    "prepack": "npm run clean && npm run build",
+    "prepublishOnly": "npm run test && npm run verify:pack",
+    "verify:pack": "node scripts/verify-pack.cjs",
     "eslint-fix": "eslint --ext ts --max-warnings 0 --fix src test",
     "eslint": "eslint --ext ts --max-warnings 0 src test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/monostop/language-server.git"
+    "url": "git+https://github.com/crewlm/gherkin-lsp.git"
   },
   "keywords": [
     "cucumber",
@@ -67,9 +71,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/monostop/language-server/issues"
+    "url": "https://github.com/crewlm/gherkin-lsp/issues"
   },
-  "homepage": "https://github.com/monostop/language-server#readme",
+  "homepage": "https://github.com/crewlm/gherkin-lsp#readme",
   "lint-staged": {
     "{src,test}/**/*.ts": "npm run eslint-fix"
   },

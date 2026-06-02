@@ -1,6 +1,6 @@
 {
   "name": "@crewlm/gherkin-lsp",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Gherkin language server for Python Behave step definitions",
   "engines": {
     "node": ">=16.0.0"

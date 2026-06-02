@@ -28,6 +28,11 @@ export async function runCli(options: CliOptions): Promise<number | undefined> {
   const stderr = options.stderr || process.stderr
   const args = options.argv.slice()
 
+  if (args.includes('--help') || args.includes('-h')) {
+    stdout.write(`${usage()}\n`)
+    return 0
+  }
+
   if (args.length === 0 || args.includes('--stdio')) {
     const { connection } = options.startStdio(
       options.wasmBasePath,
@@ -124,6 +129,7 @@ function usage(): string {
   return [
     'Usage:',
     '  gherkin-lsp --stdio',
+    '  gherkin-lsp --help',
     '  gherkin-lsp check <feature-file> [--root <path>] [--steps <glob-or-dir>] [--format text|json] [--fail-on error|warning]',
   ].join('\n')
 }

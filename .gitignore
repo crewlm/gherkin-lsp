@@ -17,5 +17,4 @@ storybook-static
 *.iml
 .vscode-test
 src/version.ts
-gherkin_features/
-steps/
+.DS_Store

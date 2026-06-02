@@ -15,7 +15,7 @@ impl zed::Extension for GherkinExtension {
         let server_path = if worktree.read_text_file("bin/gherkin-lsp.cjs").is_ok() {
             format!("{}/bin/gherkin-lsp.cjs", worktree.root_path())
         } else {
-            "/Users/viktorforsman/Code/language-server/bin/gherkin-lsp.cjs".to_string()
+            "/Users/viktorforsman/Code/gherkin-lsp/bin/gherkin-lsp.cjs".to_string()
         };
 
         let mut env = Vec::new();

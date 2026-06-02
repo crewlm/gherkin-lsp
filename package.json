@@ -61,13 +61,9 @@
     "gherkin",
     "lsp"
   ],
-  "author": "Cucumber Limited <cukes@googlegroups.com>",
+  "author": "CrewLM",
   "contributors": [
-    "Aslak Hellesøy <aslak.hellesoy@gmail.com>",
-    "Aurélien Reeves <aurelien.reeves@smartbear.com>",
-    "Binh Duc Tran <binhtran432k@gmail.com>",
-    "Kieran Ryan <kierankilkenny@gmail.com>",
-    "William Boman <william@redwill.se>"
+    "Viktor Forsman <viktor.forsman@crewlm.ai>"
   ],
   "license": "MIT",
   "bugs": {

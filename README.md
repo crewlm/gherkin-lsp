@@ -16,6 +16,12 @@
 Provides Gherkin diagnostics, completion, formatting, and step-definition navigation for
 editors that support the Language Server Protocol (LSP).
 
+This project is a hard fork of
+[`cucumber/language-server`](https://github.com/cucumber/language-server), originally
+developed by Cucumber Ltd and contributors. It is distributed under the MIT License.
+This fork is maintained by CrewLM and focuses on Gherkin/Carmen Python Behave
+workflows.
+
 ## Features
 
 This is a focused fork of the Cucumber language server. It defaults to:

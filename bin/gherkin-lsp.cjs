@@ -2,16 +2,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('source-map-support').install()
 const { startStandaloneServer } = require('../dist/cjs/src/wasm/startStandaloneServer')
-const { NodeFiles } = require('../dist/cjs/src/node/NodeFiles')
-const path = require('path')
-const { version } = require('../dist/cjs/src/version')
+const { defaultWasmBasePath, runCli } = require('../dist/cjs/src/node/cli')
 
-const wasmBasePath = path.resolve(`${__dirname}/../node_modules/@cucumber/language-service/dist`)
-const { connection } = startStandaloneServer(wasmBasePath, (rootUri) => new NodeFiles(rootUri))
-
-// Don't die on unhandled Promise rejections
-process.on('unhandledRejection', (reason, p) => {
-  connection.console.error(
-    `Gherkin LSP ${version}: Unhandled Rejection at promise: ${p}, reason: ${reason}`
-  )
+runCli({
+  argv: process.argv.slice(2),
+  wasmBasePath: defaultWasmBasePath(__dirname),
+  startStdio: startStandaloneServer,
+}).then((exitCode) => {
+  if (typeof exitCode === 'number') process.exitCode = exitCode
 })

@@ -34,6 +34,39 @@ bunx @crewlm/gherkin-lsp --stdio
 
 The executable exposed by the package is `gherkin-lsp`.
 
+## CLI check
+
+Check one feature file from a Carmen `carmusr` checkout:
+
+```console
+gherkin-lsp check gherkin_features/PAIRING_BASE/trip.feature
+```
+
+For the standard Carmen layout, the command infers the `carmusr` root from the feature
+path and loads step definitions from:
+
+```text
+lib/python/carmtest/behave/steps/**/*.py
+```
+
+Override discovery when needed:
+
+```console
+gherkin-lsp check path/to/file.feature \
+  --root /path/to/carmusr \
+  --steps 'lib/python/carmtest/behave/steps/**/*.py' \
+  --format text \
+  --fail-on error
+```
+
+Options:
+
+- `--root <path>` overrides the inferred `carmusr` root.
+- `--steps <glob-or-dir>` overrides the default step-definition location. Relative
+  paths are resolved from the inferred or explicit root.
+- `--format text|json` defaults to `text`.
+- `--fail-on error|warning` defaults to `error`; undefined steps are warnings.
+
 ### Settings
 
 The LSP client can provide settings to the server, but the server provides zero-config
